@@ -1,0 +1,3 @@
+C:\bbmacro\input\테스트 문서 1.hwp
+C:\bbmacro\input\테스트 문서 2.hwp
+C:\bbmacro\input\테스트 문서 3.hwp

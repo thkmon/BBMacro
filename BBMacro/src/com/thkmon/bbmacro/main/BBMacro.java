@@ -1,14 +1,11 @@
 package com.thkmon.bbmacro.main;
 
-public class BBMacro {
+import com.thkmon.bbmacro.ctrl.CommandController;
 
-	public static final String version = "190308";
+public class BBMacro {
 	
 	public static void main(String[] args) {
-		new BBMacro().main();
-	}
-	
-	public void main() {
-		System.out.println("version : " + version);
+		CommandController commCtrl = new CommandController();
+		commCtrl.runCommand();
 	}
 }
