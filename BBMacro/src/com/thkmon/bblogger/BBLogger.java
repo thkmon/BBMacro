@@ -78,12 +78,12 @@ public class BBLogger {
 			File logDir = new File(logDirPath);
 			String dirPath = revisePath(logDir.getAbsolutePath());
 			if (!logDir.exists()) {
-				System.err.println("BBLogger : this directory not exists [" + dirPath + "]");
+				System.err.println("BBLogger : The directory does not exists. [" + dirPath + "]");
 				return;
 			}
 			
 			if (!logDir.isDirectory()) {
-				System.err.println("BBLogger : this path is not directory [" + dirPath + "]");
+				System.err.println("BBLogger : The path is not directory. [" + dirPath + "]");
 				return;
 			}
 			
