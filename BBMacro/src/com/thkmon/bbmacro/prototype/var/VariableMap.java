@@ -1,8 +1,9 @@
-package com.thkmon.bbmacro.prototype;
+package com.thkmon.bbmacro.prototype.var;
 
 import java.util.HashMap;
 
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.thkmon.bbmacro.prototype.FileContent;
 
 public class VariableMap extends HashMap<String, Variable> {
 	
@@ -19,7 +20,10 @@ public class VariableMap extends HashMap<String, Variable> {
 			this.remove(variableName);
 		}
 		
-		Variable var = this.put(variableName, new Variable(variableName, pureText));
+		TextVariable textVarObj = new TextVariable(variableName);
+		textVarObj.init(pureText);
+		
+		Variable var = this.put(variableName, textVarObj);
 		if (var != null) {
 			return true;
 		}
@@ -40,7 +44,10 @@ public class VariableMap extends HashMap<String, Variable> {
 			this.remove(variableName);
 		}
 		
-		Variable var = this.put(variableName, new Variable(variableName, pureNumber));
+		NumberVariable numberVarObj = new NumberVariable(variableName);
+		numberVarObj.init(pureNumber);
+		
+		Variable var = this.put(variableName, numberVarObj);
 		if (var != null) {
 			return true;
 		}
@@ -61,7 +68,10 @@ public class VariableMap extends HashMap<String, Variable> {
 			this.remove(variableName);
 		}
 		
-		Variable var = this.put(variableName, new Variable(variableName, fileContent));
+		FileVariable fileVarObj = new FileVariable(variableName);
+		fileVarObj.init(fileContent);
+		
+		Variable var = this.put(variableName, fileVarObj);
 		if (var != null) {
 			return true;
 		}
@@ -85,7 +95,10 @@ public class VariableMap extends HashMap<String, Variable> {
 			this.remove(variableName);
 		}
 		
-		Variable var = this.put(variableName, new Variable(variableName, iCurrentValue, iBeginValue, iEndValue, forLineNumber));
+		ForVariable forVarObj = new ForVariable(variableName);
+		forVarObj.init(iCurrentValue, iBeginValue, iEndValue, forLineNumber);
+		
+		Variable var = this.put(variableName, forVarObj);
 		if (var != null) {
 			return true;
 		}
@@ -106,7 +119,10 @@ public class VariableMap extends HashMap<String, Variable> {
 			this.remove(variableName);
 		}
 		
-		Variable var = this.put(variableName, new Variable(variableName, hwnd, windowTextToFind));
+		WindowVariable windowVarObj = new WindowVariable(variableName);
+		windowVarObj.init(hwnd, windowTextToFind);
+		
+		Variable var = this.put(variableName, windowVarObj);
 		if (var != null) {
 			return true;
 		}

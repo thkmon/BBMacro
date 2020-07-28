@@ -1,7 +1,11 @@
 package com.thkmon.bbmacro.ctrl;
 
 import com.thkmon.bbmacro.prototype.MsgException;
-import com.thkmon.bbmacro.prototype.Variable;
+import com.thkmon.bbmacro.prototype.var.FileVariable;
+import com.thkmon.bbmacro.prototype.var.ForVariable;
+import com.thkmon.bbmacro.prototype.var.NumberVariable;
+import com.thkmon.bbmacro.prototype.var.TextVariable;
+import com.thkmon.bbmacro.prototype.var.Variable;
 import com.thkmon.bbmacro.util.StringUtil;
 
 public class CommandHelper {
@@ -24,7 +28,7 @@ public class CommandHelper {
 		} else {
 			// TEXT 변수일 경우
 			Variable varObj = CommandController.varMap.get(variableValue);
-			if (varObj != null && varObj.checkTypeIsText()) {
+			if (varObj != null && varObj instanceof TextVariable) {
 				return true;
 			}
 		}
@@ -50,9 +54,9 @@ public class CommandHelper {
 			// NUMBER 변수일 경우
 			Variable indexVarObj = CommandController.varMap.get(variableValue);
 			if (indexVarObj != null) {
-				if (indexVarObj.checkTypeIsNumber()) {
+				if (indexVarObj instanceof NumberVariable) {
 					bResult = true;
-				} else if (indexVarObj.checkTypeIsFor()) {
+				} else if (indexVarObj instanceof ForVariable) {
 					bResult = true;
 				}
 			}
@@ -73,9 +77,10 @@ public class CommandHelper {
 			String variableName = StringUtil.getStringAfterRemovingSurroundedText(variableValue, "LEN(", ")", true);
 			Variable varObj = CommandController.varMap.get(variableName);
 			
-			if (varObj != null && varObj.checkTypeIsFile()) {
-				if (varObj.getFileContent() != null && varObj.getFileContent().size() > 0) {
-					iResult = varObj.getFileContent().size();
+			if (varObj != null && varObj instanceof FileVariable) {
+				FileVariable fileVarObj = (FileVariable) varObj;
+				if (fileVarObj.getFileContent() != null && fileVarObj.getFileContent().size() > 0) {
+					iResult = fileVarObj.getFileContent().size();
 				} else {
 					iResult = 0;
 					
@@ -91,10 +96,12 @@ public class CommandHelper {
 			// 넘버변수일 경우
 			Variable indexVarObj = CommandController.varMap.get(variableValue);
 			if (indexVarObj != null) {
-				if (indexVarObj.checkTypeIsNumber()) {
-					iResult = indexVarObj.getNumberValue();
-				} else if (indexVarObj.checkTypeIsFor()) {
-					iResult = indexVarObj.getForCurrentValue();
+				if (indexVarObj instanceof NumberVariable) {
+					NumberVariable numberVarObj = (NumberVariable) indexVarObj;
+					iResult = numberVarObj.getNumberValue();
+				} else if (indexVarObj instanceof ForVariable) {
+					ForVariable forVarObj = (ForVariable) indexVarObj;
+					iResult = forVarObj.getForCurrentValue();
 				}
 			}
 		}
@@ -133,19 +140,20 @@ public class CommandHelper {
 					if (targetIndexText != null && targetIndexText.length() > 0) {
 						
 						Variable varObj = CommandController.varMap.get(targetVariableName);
-						if (varObj != null && varObj.checkTypeIsFile()) {
-							if (varObj.getFileContent() != null && varObj.getFileContent().size() > 0) {
+						if (varObj != null && varObj instanceof FileVariable) {
+							FileVariable fileVarObj = (FileVariable) varObj;
+							if (fileVarObj.getFileContent() != null && fileVarObj.getFileContent().size() > 0) {
 								
 								// 인덱스를 숫자로 바꿔준다.
 								int iTargetIndexText = this.getVariablePureNumber(targetIndexText);
 								
 								int variableIndex = StringUtil.parseInt(iTargetIndexText);
-								int lastIndex = varObj.getFileContent().size() - 1;
+								int lastIndex = fileVarObj.getFileContent().size() - 1;
 								if (variableIndex > lastIndex) {
 									throw new MsgException("The variable's index is out of bounds. variableName == [" + targetVariableName + "] / variableIndex == [" + variableIndex + "] / lastIndex == [" + lastIndex + "]");
 								}
 								
-								String pureText = varObj.getFileContent().get(variableIndex);
+								String pureText = fileVarObj.getFileContent().get(variableIndex);
 								if (pureText != null && pureText.length() > 0) {
 									resultValue = pureText;
 								}
@@ -162,8 +170,9 @@ public class CommandHelper {
 			} else {
 				// 일반 변수로 판단한다.
 				Variable varObj = CommandController.varMap.get(variableValue);
-				if (varObj != null && varObj.checkTypeIsText()) {
-					String pureText = varObj.getTextValue();
+				if (varObj != null && varObj instanceof TextVariable) {
+					TextVariable textVarObj = (TextVariable) varObj;
+					String pureText = textVarObj.getTextValue();
 					if (pureText != null && pureText.length() > 0) {
 						resultValue = pureText;
 					}

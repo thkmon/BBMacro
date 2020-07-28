@@ -10,8 +10,10 @@ import com.thkmon.bbmacro.prototype.FileContent;
 import com.thkmon.bbmacro.prototype.ForNextException;
 import com.thkmon.bbmacro.prototype.MsgException;
 import com.thkmon.bbmacro.prototype.Rect;
-import com.thkmon.bbmacro.prototype.Variable;
-import com.thkmon.bbmacro.prototype.VariableMap;
+import com.thkmon.bbmacro.prototype.var.ForVariable;
+import com.thkmon.bbmacro.prototype.var.Variable;
+import com.thkmon.bbmacro.prototype.var.VariableMap;
+import com.thkmon.bbmacro.prototype.var.WindowVariable;
 import com.thkmon.bbmacro.util.ClipboardUtil;
 import com.thkmon.bbmacro.util.FileUtil;
 import com.thkmon.bbmacro.util.HwndUtil;
@@ -431,16 +433,17 @@ public class CommandController {
 			return false;
 		}
 	
-		if (!varObj.checkTypeIsFor()) {
+		if (!(varObj instanceof ForVariable)) {
 			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The variable is not type of FOR. variableName == [" + variableName + "]");
 			return false;
 		}
 		
-		varObj.setForCurrentValue(varObj.getForCurrentValue() + 1);
-		if (varObj.getForCurrentValue() <= varObj.getForEndValue()) {
-			int iBeginValue = varObj.getForBeginValue();
-			int iEndValue = varObj.getForEndValue();
-			int forLineNumber = varObj.getForLineNumber();
+		ForVariable forVarObj = (ForVariable) varObj;
+		forVarObj.setForCurrentValue(forVarObj.getForCurrentValue() + 1);
+		if (forVarObj.getForCurrentValue() <= forVarObj.getForEndValue()) {
+			int iBeginValue = forVarObj.getForBeginValue();
+			int iEndValue = forVarObj.getForEndValue();
+			int forLineNumber = forVarObj.getForLineNumber();
 			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. variableName == [" + variableName + "] / iBeginValue == [" + iBeginValue + "] / iEndValue == [" + iEndValue + "] / forLineNumber == [" + forLineNumber + "]");
 			
 			throw new ForNextException(forLineNumber);
@@ -584,14 +587,16 @@ public class CommandController {
 			return false;
 		}
 		
-		if (!varObj.checkTypeIsWindow()) {
+		if (!(varObj instanceof WindowVariable)) {
 			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The variable is not type of WINDOW. variableName == [" + variableName + "]");
 			return false;
 		}
 		
+		WindowVariable winVarObj = (WindowVariable) varObj;
+		
 		HandleFinder handleFinder = new HandleFinder();
-		HWND handle = varObj.getWindowHwnd();
-		String handleNameOrClass = varObj.getWindowTextToFind();
+		HWND handle = winVarObj.getWindowHwnd();
+		String handleNameOrClass = winVarObj.getWindowTextToFind();
 		if (handleNameOrClass == null || handleNameOrClass.length() == 0) {
 			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The handleNameOrClass is empty. originCommand == [" + originCommand + "]");
 			return false;
