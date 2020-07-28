@@ -6,6 +6,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
+import com.thkmon.bbmacro.util.LogUtil;
 
 public class HandleFinder {
 	
@@ -81,8 +82,8 @@ public class HandleFinder {
 				}
 			}, null);
 
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+		} catch (Exception e) {
+			LogUtil.error(e);
 		}
 	}
 }

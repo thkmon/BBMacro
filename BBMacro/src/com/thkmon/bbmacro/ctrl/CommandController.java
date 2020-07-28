@@ -6,6 +6,7 @@ import java.io.File;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.thkmon.bbmacro.common.CommonConst;
 import com.thkmon.bbmacro.handle.HandleFinder;
+import com.thkmon.bbmacro.log.BBLogger;
 import com.thkmon.bbmacro.prototype.FileContent;
 import com.thkmon.bbmacro.prototype.ForNextException;
 import com.thkmon.bbmacro.prototype.MsgException;
@@ -15,6 +16,7 @@ import com.thkmon.bbmacro.prototype.var.Variable;
 import com.thkmon.bbmacro.prototype.var.VariableMap;
 import com.thkmon.bbmacro.prototype.var.WindowVariable;
 import com.thkmon.bbmacro.util.ClipboardUtil;
+import com.thkmon.bbmacro.util.DateUtil;
 import com.thkmon.bbmacro.util.FileUtil;
 import com.thkmon.bbmacro.util.HwndUtil;
 import com.thkmon.bbmacro.util.ImageUtil;
@@ -36,7 +38,18 @@ public class CommandController {
 		varMap = null;
 		varMap = new VariableMap();
 		
-		File commandFile = new File("data/command.txt");
+		// 로그 객체 초기화
+		if (CommonConst.logger == null) {
+			String logFileName = "log_" + DateUtil.getTodayDateTime();
+			CommonConst.logger = new BBLogger("log", logFileName);
+			if (CommonConst.logger != null) {
+				if (!CommonConst.logger.isbInit()) {
+					CommonConst.logger = null;
+				}
+			}
+		}
+		
+		File commandFile = new File("command.txt");
 		if (!commandFile.exists()) {
 			LogUtil.error("Command File Not Found. Path == [" + commandFile.getAbsolutePath() + "]" );
 			return false;

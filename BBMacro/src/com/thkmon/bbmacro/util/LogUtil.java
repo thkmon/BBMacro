@@ -1,6 +1,13 @@
 package com.thkmon.bbmacro.util;
 
+import com.thkmon.bbmacro.common.CommonConst;
+import com.thkmon.bbmacro.log.BBLogger;
+
 public class LogUtil {
+	
+	
+	public static BBLogger logger = null;
+	
 	
 	public static void debug(Object obj) {
 		String str = "";
@@ -10,7 +17,11 @@ public class LogUtil {
 			str = obj.toString();
 		}
 		
-		System.out.println("DEBUG : " + str);
+		if (CommonConst.logger != null && CommonConst.logger.isbInit()) {
+			CommonConst.logger.debug(str);
+		} else {
+			System.out.println("[debug]" + str);
+		}
 	}
 	
 	
@@ -30,7 +41,11 @@ public class LogUtil {
 			str = obj.toString();
 		}
 		
-		System.err.println("ERROR : " + str);
+		if (CommonConst.logger != null && CommonConst.logger.isbInit()) {
+			CommonConst.logger.error(str);
+		} else {
+			System.err.println("[error]" + str);
+		}
 	}
 	
 	
