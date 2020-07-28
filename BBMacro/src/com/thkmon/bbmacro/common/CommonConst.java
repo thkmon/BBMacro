@@ -1,6 +1,6 @@
 package com.thkmon.bbmacro.common;
 
-import com.thkmon.bbmacro.log.BBLogger;
+import com.thkmon.bblogger.BBLogger;
 
 public class CommonConst {
 	public static final String version = "200728";

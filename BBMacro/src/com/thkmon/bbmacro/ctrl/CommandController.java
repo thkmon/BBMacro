@@ -6,7 +6,7 @@ import java.io.File;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.thkmon.bbmacro.common.CommonConst;
 import com.thkmon.bbmacro.handle.HandleFinder;
-import com.thkmon.bbmacro.log.BBLogger;
+import com.thkmon.bblogger.BBLogger;
 import com.thkmon.bbmacro.prototype.FileContent;
 import com.thkmon.bbmacro.prototype.ForNextException;
 import com.thkmon.bbmacro.prototype.MsgException;
@@ -42,11 +42,6 @@ public class CommandController {
 		if (CommonConst.logger == null) {
 			String logFileName = "log_" + DateUtil.getTodayDateTime();
 			CommonConst.logger = new BBLogger("log", logFileName);
-			if (CommonConst.logger != null) {
-				if (!CommonConst.logger.isbInit()) {
-					CommonConst.logger = null;
-				}
-			}
 		}
 		
 		File commandFile = new File("command.txt");
