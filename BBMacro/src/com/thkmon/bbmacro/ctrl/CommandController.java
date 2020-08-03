@@ -142,6 +142,14 @@ public class CommandController {
 					} else if (firstSlice.equalsIgnoreCase("CLICKIMG")) {
 						// CLICKIMG
 						return commandClickImg(command, commandArr, lineNumber);
+					
+					} else if (firstSlice.equalsIgnoreCase("MOVEMOUSE")) {
+						// MOVEMOUSE
+						return commandMoveMouse(command, commandArr, lineNumber);
+						
+					} else if (firstSlice.equalsIgnoreCase("CLICKMOUSE")) {
+						// CLICKMOUSE
+						return commandClickMouse(command, commandArr, lineNumber);
 						
 					} else if (firstSlice.equalsIgnoreCase("FINDIMG")) {
 						// FINDIMG
@@ -743,6 +751,161 @@ public class CommandController {
 		}
 		
 		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "] / mouseButton == [" + mouseButton + "]");
+		
+		return true;
+	}
+	
+	
+	/**
+	 * MOVEMOUSE
+	 * ex) MOVEMOUSE 100,100
+	 * 
+	 * @param originCommand
+	 * @param commandArr
+	 * @param lineNumber
+	 * @return
+	 */
+	private boolean commandMoveMouse(String originCommand, String[] commandArr, int lineNumber) throws Exception {
+		String commandName = "MOVEMOUSE";
+		
+		if (commandArr == null || commandArr.length == 0) {
+			return false;
+		}
+		
+		if (commandArr[0] == null || !commandArr[0].equalsIgnoreCase(commandName)) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] commandName is invalid.");
+			return false;
+		}
+		
+		String value = commandArr[1].trim();
+		
+		// 구분자 파이프로 split
+		if (value == null || value.indexOf(",") < 0) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+			return false;
+		}
+		
+		String[] valueArr = value.split(",");
+		int arrCount = valueArr.length;
+		if (arrCount < 2) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+			return false;
+		}
+		
+		int mx = 0;
+		int my = 0;
+		if (valueArr[0] != null && valueArr[0].length() > 0) {
+			mx = commandHelper.getVariablePureNumber(valueArr[0]);
+		}
+		
+		if (valueArr[1] != null && valueArr[1].length() > 0) {
+			my = commandHelper.getVariablePureNumber(valueArr[1]);
+		}
+		
+		RobotUtil.moveMouse(mx, my);
+		
+		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "]");
+		
+		return true;
+	}
+	
+	
+	/**
+	 * CLICKMOUSE
+	 * ex) CLICKMOUSE
+	 * 또는 CLICKMOUSE 100,100
+	 * 또는 CLICKMOUSE 100,100 (LEFT)
+	 * 또는 CLICKMOUSE (LEFT)
+	 * 
+	 * @param originCommand
+	 * @param commandArr
+	 * @param lineNumber
+	 * @return
+	 */
+	private boolean commandClickMouse(String originCommand, String[] commandArr, int lineNumber) throws Exception {
+		String commandName = "CLICKMOUSE";
+		
+		if (commandArr == null || commandArr.length == 0) {
+			return false;
+		}
+		
+		if (commandArr[0] == null || !commandArr[0].equalsIgnoreCase(commandName)) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] commandName is invalid.");
+			return false;
+		}
+		
+		boolean bUsePixel = false;
+		String value = commandArr[1].trim();
+		String[] valueArr = null;
+		
+		if (value != null && value.length() > 0 && value.indexOf("(") < 0 && value.indexOf(")") < 0) {
+			// 구분자 파이프로 split
+			if (value.indexOf(",") < 0) {
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+				return false;
+			}
+			
+			valueArr = value.split(",");
+			int arrCount = valueArr.length;
+			if (arrCount < 2) {
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+				return false;
+			}
+			
+			bUsePixel = true;
+		}
+		
+		String mouseButton = "";
+		try {
+			if (bUsePixel) {
+				mouseButton = commandArr[2].trim();
+			} else {
+				mouseButton = commandArr[1].trim();
+			}
+			
+			if (mouseButton.indexOf("(") > -1) {
+				mouseButton = mouseButton.replace("(", "");
+			}
+			
+			if (mouseButton.indexOf(")") > -1) {
+				mouseButton = mouseButton.replace(")", "");
+			}
+		} catch (Exception e) {
+		}
+		
+		// 기본은 마우스 좌클릭
+		if (mouseButton == null || mouseButton.length() == 0) {
+			mouseButton = "LEFT";
+		}
+		
+		if (bUsePixel) {
+			int mx = 0;
+			int my = 0;
+			if (valueArr[0] != null && valueArr[0].length() > 0) {
+				mx = commandHelper.getVariablePureNumber(valueArr[0]);
+			}
+			
+			if (valueArr[1] != null && valueArr[1].length() > 0) {
+				my = commandHelper.getVariablePureNumber(valueArr[1]);
+			}
+			
+			if (mouseButton != null && mouseButton.equals("RIGHT")) {
+				RobotUtil.clickMouseRight(mx, my);
+			} else {
+				RobotUtil.clickMouseLeft(mx, my);
+			}
+			
+			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "] / mouseButton == [" + mouseButton + "]");
+			
+		} else {
+			if (mouseButton != null && mouseButton.equals("RIGHT")) {
+				RobotUtil.clickMouseRight();
+			} else {
+				RobotUtil.clickMouseLeft();
+			}
+			
+			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mouseButton == [" + mouseButton + "]");
+		}
 		
 		return true;
 	}
