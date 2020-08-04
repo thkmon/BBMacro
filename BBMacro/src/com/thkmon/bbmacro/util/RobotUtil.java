@@ -1,6 +1,8 @@
 package com.thkmon.bbmacro.util;
 
 import java.awt.AWTException;
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -13,29 +15,97 @@ public class RobotUtil {
 	private static Robot robot = null;
 	
 	
-	public static boolean moveMouse(int x, int y) throws AWTException {
+	/**
+	 * 로봇 객체 초기화
+	 * 
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static void initRobot() throws AWTException, Exception {
+		if (robot == null) {
+			robot = new Robot();
+		}
+	}
+	
+	
+	/**
+	 * 마우스 이동
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean moveMouse(int x, int y) throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
 		
-		robot.mouseMove(x, y);
+		PointerInfo pointerInfo = null;
+		int realX = 0;
+		int realY = 0;
+		
+		// 컴퓨터에 따라 마우스가 이동하지 않는 경우가 발생. 최대 10초까지 마우스 이동여부 검사
+		for (int i=0; i<100; i++) {
+			robot.mouseMove(x, y);
+			
+			pointerInfo = MouseInfo.getPointerInfo();
+			realX = (int)pointerInfo.getLocation().getX();
+			realY = (int)pointerInfo.getLocation().getY();
+			
+			// 마우스 이동 성공 시 break
+			if (x == realX && y == realY) {
+				break;
+			}
+			
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {}
+		}
+		
 		return true;
 	}
 	
 	
-	public static boolean clickMouseLeft(int x, int y) throws AWTException {
+	/**
+	 * 마우스 이동 및 마우스 좌클릭
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean clickMouseLeft(int x, int y) throws AWTException, Exception {
 		moveMouse(x, y);
 		return clickMouseLeft();
 	}
 	
 	
-	public static boolean clickMouseRight(int x, int y) throws AWTException {
+	/**
+	 * 마우스 이동 및 마우스 우클릭
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean clickMouseRight(int x, int y) throws AWTException, Exception {
 		moveMouse(x, y);
 		return clickMouseRight();
 	}
 	
 	
-	public static boolean clickMouseLeft() throws AWTException {
+	/**
+	 * 마우스 좌클릭
+	 * 
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean clickMouseLeft() throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
@@ -46,7 +116,14 @@ public class RobotUtil {
 	}
 	
 	
-	public static boolean clickMouseRight() throws AWTException {
+	/**
+	 * 마우스 우클릭
+	 * 
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean clickMouseRight() throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
@@ -57,7 +134,15 @@ public class RobotUtil {
 	}
 	
 	
-	public static boolean pressKey(int keycode) throws AWTException {
+	/**
+	 * 키입력
+	 * 
+	 * @param keycode
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean pressKey(int keycode) throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
@@ -70,7 +155,16 @@ public class RobotUtil {
 	}
 	
 	
-	public static boolean pressKey(int keycode1, int keycode2) throws AWTException {
+	/**
+	 * 키입력. 2개 동시입력
+	 * 
+	 * @param keycode1
+	 * @param keycode2
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean pressKey(int keycode1, int keycode2) throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
@@ -87,7 +181,17 @@ public class RobotUtil {
 	}
 	
 	
-	public static boolean pressKey(int keycode1, int keycode2, int keycode3) throws AWTException {
+	/**
+	 * 키입력. 3개 동시입력
+	 * 
+	 * @param keycode1
+	 * @param keycode2
+	 * @param keycode3
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean pressKey(int keycode1, int keycode2, int keycode3) throws AWTException, Exception {
 		if (robot == null) {
 			robot = new Robot();
 		}
@@ -108,12 +212,27 @@ public class RobotUtil {
 	}
 	
 	
-	public static boolean pressKeyCtrlV() throws AWTException {
+	/**
+	 * 붙여넣기(Ctrl+v)
+	 * 
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean pressKeyCtrlV() throws AWTException, Exception {
 		return pressKey(KeyEvent.VK_CONTROL, KeyEvent.VK_V);
 	}
 	
 	
-	public static boolean pressKeyAltF4(int delay) throws AWTException {
+	/**
+	 * 종료(Alt+F4)
+	 * 
+	 * @param delay
+	 * @return
+	 * @throws AWTException
+	 * @throws Exception
+	 */
+	public static boolean pressKeyAltF4(int delay) throws AWTException, Exception {
 		return pressKey(KeyEvent.VK_ALT, KeyEvent.VK_F4);
 	}
 }

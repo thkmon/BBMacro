@@ -38,6 +38,13 @@ public class CommandController {
 		varMap = null;
 		varMap = new VariableMap();
 		
+		// 로봇 객체 초기화
+		try {
+			RobotUtil.initRobot();
+		} catch (Exception e) {
+			LogUtil.error("initRobot Error. e == [" + e.getMessage() + "]");
+		}
+		
 		// 로그 객체 초기화
 		if (CommonConst.logger == null) {
 			String logFileName = "log_" + DateUtil.getTodayDateTime();
