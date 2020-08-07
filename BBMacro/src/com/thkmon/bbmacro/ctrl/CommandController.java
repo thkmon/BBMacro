@@ -154,9 +154,9 @@ public class CommandController {
 						// MOVEMOUSE
 						return commandMoveMouse(command, commandArr, lineNumber);
 						
-					} else if (firstSlice.equalsIgnoreCase("CLICKMOUSE")) {
-						// CLICKMOUSE
-						return commandClickMouse(command, commandArr, lineNumber);
+					} else if (firstSlice.equalsIgnoreCase("CLICK") || firstSlice.equalsIgnoreCase("DBCLICK")) {
+						// CLICK, DBCLICK
+						return commandClick(command, commandArr, lineNumber);
 						
 					} else if (firstSlice.equalsIgnoreCase("FINDIMG")) {
 						// FINDIMG
@@ -818,27 +818,40 @@ public class CommandController {
 	
 	
 	/**
-	 * CLICKMOUSE
-	 * ex) CLICKMOUSE
-	 * 또는 CLICKMOUSE 100,100
-	 * 또는 CLICKMOUSE 100,100 (LEFT)
-	 * 또는 CLICKMOUSE (LEFT)
+	 * CLICK
+	 * ex) CLICK
+	 * 또는 CLICK 100,100
+	 * 또는 CLICK 100,100 (LEFT)
+	 * 또는 CLICK (LEFT)
+	 * 
+	 * DBCLICK
+	 * ex) DBCLICK
+	 * 또는 DBCLICK 100,100
+	 * 또는 DBCLICK 100,100 (LEFT)
+	 * 또는 DBCLICK (LEFT)
 	 * 
 	 * @param originCommand
 	 * @param commandArr
 	 * @param lineNumber
 	 * @return
 	 */
-	private boolean commandClickMouse(String originCommand, String[] commandArr, int lineNumber) throws Exception {
-		String commandName = "CLICKMOUSE";
+	private boolean commandClick(String originCommand, String[] commandArr, int lineNumber) throws Exception {
+		String commandName = "CLICK";
+		String strDbClick = "DBCLICK";
+		boolean bDoubleClick = false;
 		
 		if (commandArr == null || commandArr.length == 0) {
 			return false;
 		}
 		
 		if (commandArr[0] == null || !commandArr[0].equalsIgnoreCase(commandName)) {
-			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] commandName is invalid.");
-			return false;
+			if (commandArr[0] == null || !commandArr[0].equalsIgnoreCase(strDbClick)) {
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] commandName is invalid.");
+				return false;
+			} else {
+				commandName = strDbClick;
+				bDoubleClick = true;
+			}
 		}
 		
 		boolean bUsePixel = false;
@@ -898,8 +911,16 @@ public class CommandController {
 			
 			if (mouseButton != null && mouseButton.equals("RIGHT")) {
 				RobotUtil.clickMouseRight(mx, my);
+				if (bDoubleClick) {
+					Thread.sleep(CommonConst.doubleClickDelay);
+					RobotUtil.clickMouseRight(mx, my);
+				}
 			} else {
 				RobotUtil.clickMouseLeft(mx, my);
+				if (bDoubleClick) {
+					Thread.sleep(CommonConst.doubleClickDelay);
+					RobotUtil.clickMouseLeft(mx, my);
+				}
 			}
 			
 			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "] / mouseButton == [" + mouseButton + "]");
@@ -907,8 +928,16 @@ public class CommandController {
 		} else {
 			if (mouseButton != null && mouseButton.equals("RIGHT")) {
 				RobotUtil.clickMouseRight();
+				if (bDoubleClick) {
+					Thread.sleep(CommonConst.doubleClickDelay);
+					RobotUtil.clickMouseRight();
+				}
 			} else {
 				RobotUtil.clickMouseLeft();
+				if (bDoubleClick) {
+					Thread.sleep(CommonConst.doubleClickDelay);
+					RobotUtil.clickMouseLeft();
+				}
 			}
 			
 			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mouseButton == [" + mouseButton + "]");
