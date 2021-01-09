@@ -104,7 +104,7 @@ public class ImageUtil {
 		    			screenImgObj = robot.createScreenCapture(new Rectangle((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight()));
 		    			
 		    			if (screenImgObj != null) {
-		    				// 스크린샷 파일화
+		    				// 테스트 : 스크린샷 파일화
 		    				// writeImage(screenImgObj, "screen" + imageIndex, "bmp");
 		    				
 		    				imageIndex++;
@@ -190,10 +190,11 @@ public class ImageUtil {
 					LogUtil.debug("discovered! x : " + xs + " / y : " + ys + " / w : " + smImg.getWidth() + " / h : " + smImg.getHeight());
 					rect = new Rect(xs, ys, smallWidth, smallHeight);
 					
-//					try {
-//						BufferedImage cropImgObj = bigImg.getSubimage(xs, ys, smallWidth, smallHeight);
-//						writeImage(cropImgObj, "toclick", "bmp");
-//					} catch (Exception e) {}
+					// 테스트 : 클릭 이미지 파일화
+					// try {
+					//	BufferedImage cropImgObj = bigImg.getSubimage(xs, ys, smallWidth, smallHeight);
+					//	writeImage(cropImgObj, "toclick", "bmp");
+					// } catch (Exception e) {}
 					
 					break;
 				}
