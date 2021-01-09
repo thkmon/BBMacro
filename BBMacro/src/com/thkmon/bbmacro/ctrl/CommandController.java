@@ -2,6 +2,7 @@ package com.thkmon.bbmacro.ctrl;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.HashMap;
 
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.thkmon.bbmacro.common.CommonConst;
@@ -23,6 +24,7 @@ import com.thkmon.bbmacro.util.ImageUtil;
 import com.thkmon.bbmacro.util.KeyConvertUtil;
 import com.thkmon.bbmacro.util.LogUtil;
 import com.thkmon.bbmacro.util.ProcessBuilderUtil;
+import com.thkmon.bbmacro.util.PropertiesUtil;
 import com.thkmon.bbmacro.util.RobotUtil;
 import com.thkmon.bbmacro.util.StringUtil;
 
@@ -34,6 +36,9 @@ public class CommandController {
 	
 	
 	public boolean runCommand() {
+		// option.properties 파일 읽기
+		loadOptionProperties();
+		
 		// 변수 맵 초기화
 		varMap = null;
 		varMap = new VariableMap();
@@ -51,7 +56,7 @@ public class CommandController {
 			CommonConst.logger = new BBLogger("log", logFileName);
 		}
 		
-		File commandFile = new File("command.txt");
+		File commandFile = new File(CommonConst.commandFileName);
 		if (!commandFile.exists()) {
 			LogUtil.error("Command File Not Found. Path == [" + commandFile.getAbsolutePath() + "]" );
 			return false;
@@ -92,6 +97,26 @@ public class CommandController {
 		}
 		
 		return true;
+	}
+	
+	
+	/**
+	 * option.properties 파일 읽기
+	 */
+	private void loadOptionProperties() {
+		HashMap<String, String> optionProperties = null;
+		try {
+			optionProperties = PropertiesUtil.readPropertiesFile("option.properties");
+			if (optionProperties != null) {
+				// 명령어 파일명 가져오기 (ex : command.txt)
+				String commandFileName = optionProperties.get("commandFileName");
+				if (commandFileName != null && commandFileName.length() > 0) {
+					CommonConst.commandFileName = commandFileName;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

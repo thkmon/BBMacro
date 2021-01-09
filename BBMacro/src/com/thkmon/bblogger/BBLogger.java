@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class BBLogger {
-
-	private String version = "200728";
 	
 	private boolean bConsoleMode = true;
 	private int logLevel = 5;
 	private File logDirObj = null;
 	private String logNameText = null;
+	
 	
 	public boolean isbConsoleMode() {
 		return bConsoleMode;
