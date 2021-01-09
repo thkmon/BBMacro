@@ -21,7 +21,7 @@ FOR i = 0 TO lastIndex
 	WINDOW win AS "HwpApp" WITH "C:\Program Files (x86)\Hnc\Hwp80\Hwp.exe"
 	FOCUSWIN win
 	
-	CLICKIMG "img\button_open.png"
+	CLICKIMG "img\button_open.bmp"
 	
 	WINDOW win2 AS "불러오기"
 	FOCUSWIN win2
@@ -30,14 +30,14 @@ FOR i = 0 TO lastIndex
 	
 	KEY "ENTER"
 	
-	CLICKIMG "img\button_print.png"
+	CLICKIMG "img\button_print.bmp"
 	
 	WINDOW win3 AS "인쇄"
 	FOCUSWIN win3
 	
-	CLICKIMG "img\button_pdf1.png|img\button_pdf2.png"
+	CLICKIMG "img\button_pdf1.bmp|img\button_pdf2.bmp"
 	
-	CLICKIMG "img\button_print_ok.png"
+	CLICKIMG "img\button_print_ok.bmp"
 	
 	WINDOW win4 AS "다른 이름으로 PDF 저장"
 	FOCUSWIN win4
@@ -49,7 +49,7 @@ FOR i = 0 TO lastIndex
 	
 	KEY "ENTER"
 	
-	FINDIMG "img\img_pdf_success.png"
+	FINDIMG "img\img_pdf_success.bmp"
 	KEY "ALT + F4"
 	
 	FOCUSWIN win
