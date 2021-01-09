@@ -168,7 +168,8 @@ public class ImageUtil {
 							}
 							
 						} else {
-							if (bigColor.getRed() == smallColor.getRed() && bigColor.getGreen() == smallColor.getGreen() && bigColor.getBlue() == smallColor.getBlue()) {
+							// 색상이 같은지 체크
+							if (checkColorSame(bigColor, smallColor)) {
 								bFound = true;
 								continue;
 								
@@ -222,5 +223,25 @@ public class ImageUtil {
 		} catch (Exception e) {
 			// 무시
 		}
+	}
+	
+	
+	/**
+	 * 색상이 같은지 체크
+	 * 
+	 * @param bigColor
+	 * @param smallColor
+	 * @return
+	 */
+	private static boolean checkColorSame(Color bigColor, Color smallColor) {
+		if (bigColor == null || smallColor == null) {
+			return false;
+		}
+		
+		if (bigColor.getRed() == smallColor.getRed() && bigColor.getGreen() == smallColor.getGreen() && bigColor.getBlue() == smallColor.getBlue()) {
+			return true;
+		}
+		
+		return false;
 	}
 }

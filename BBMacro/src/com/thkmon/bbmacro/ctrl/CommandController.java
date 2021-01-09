@@ -331,7 +331,7 @@ public class CommandController {
 		
 		File fileObj = new File(filePath);
 		if (fileObj == null || !fileObj.exists()) {
-			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] file does not exists. filePath == [" + fileObj.getAbsolutePath() + "]");
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The file does not exists. filePath == [" + fileObj.getAbsolutePath() + "]");
 			return false;
 		}
 		
@@ -651,7 +651,7 @@ public class CommandController {
 	
 	/**
 	 * CLICKIMG
-	 * ex) CLICKIMG "img\button_open.png"
+	 * ex) CLICKIMG "img\button_open.bmp"
 	 * 
 	 * @param originCommand
 	 * @param commandArr
@@ -711,7 +711,14 @@ public class CommandController {
 			// 이미지 존재하는지 확인
 			File imgFileObj = new File(imagePath);
 			if (!imgFileObj.exists()) {
-				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+				return false;
+			}
+			
+			// 이미지 bmp 만 허용. jpg, png 등 확장자의 이미지 손상압축으로 인해 이미지 찾아낼 수 없는 오류 방지
+			String fileExt = FileUtil.getFileExtention(imgFileObj);
+			if (fileExt == null || !fileExt.equalsIgnoreCase("bmp")) {
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Only \"bmp\" is allowed as the file extension. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
 				return false;
 			}
 			
@@ -731,7 +738,14 @@ public class CommandController {
 				// 이미지 존재하는지 확인
 				File imgFileObj = new File(imagePath);
 				if (!imgFileObj.exists()) {
-					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+					return false;
+				}
+				
+				// 이미지 bmp 만 허용. jpg, png 등 확장자의 이미지 손상압축으로 인해 이미지 찾아낼 수 없는 오류 방지
+				String fileExt = FileUtil.getFileExtention(imgFileObj);
+				if (fileExt == null || !fileExt.equalsIgnoreCase("bmp")) {
+					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Only \"bmp\" is allowed as the file extension. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
 					return false;
 				}
 				
@@ -949,7 +963,7 @@ public class CommandController {
 	
 	/**
 	 * FINDIMG
-	 * ex) FINDIMG "img\img_pdf_success.png"
+	 * ex) FINDIMG "img\img_pdf_success.bmp"
 	 * 
 	 * @param originCommand
 	 * @param commandArr
@@ -991,7 +1005,14 @@ public class CommandController {
 			// 이미지 존재하는지 확인
 			File imgFileObj = new File(imagePath);
 			if (!imgFileObj.exists()) {
-				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+				return false;
+			}
+			
+			// 이미지 bmp 만 허용. jpg, png 등 확장자의 이미지 손상압축으로 인해 이미지 찾아낼 수 없는 오류 방지
+			String fileExt = FileUtil.getFileExtention(imgFileObj);
+			if (fileExt == null || !fileExt.equalsIgnoreCase("bmp")) {
+				LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Only \"bmp\" is allowed as the file extension. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
 				return false;
 			}
 			
@@ -1011,7 +1032,14 @@ public class CommandController {
 				// 이미지 존재하는지 확인
 				File imgFileObj = new File(imagePath);
 				if (!imgFileObj.exists()) {
-					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] The file does not exists. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
+					return false;
+				}
+				
+				// 이미지 bmp 만 허용. jpg, png 등 확장자의 이미지 손상압축으로 인해 이미지 찾아낼 수 없는 오류 방지
+				String fileExt = FileUtil.getFileExtention(imgFileObj);
+				if (fileExt == null || !fileExt.equalsIgnoreCase("bmp")) {
+					LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Only \"bmp\" is allowed as the file extension. imagePath == [" + imgFileObj.getAbsolutePath() + "]");
 					return false;
 				}
 				

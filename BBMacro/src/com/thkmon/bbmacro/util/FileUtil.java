@@ -130,4 +130,27 @@ public class FileUtil {
 			bufferedReader = null;
 		}
 	}
+	
+	
+	/**
+	 * 파일 확장자 가져오기
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static String getFileExtention(File file) {
+		String ext = "";
+		
+		if (file != null) {
+			String fileName = file.getName();
+			if (fileName != null && fileName.length() > 0) {
+				int idxDot = fileName.lastIndexOf(".");
+				if (idxDot > -1) {
+					ext = fileName.substring(idxDot + 1);
+				}
+			}
+		}
+		
+		return ext;
+	}
 }
