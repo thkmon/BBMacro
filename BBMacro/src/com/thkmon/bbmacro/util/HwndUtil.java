@@ -3,6 +3,7 @@ package com.thkmon.bbmacro.util;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.RECT;
 
 public class HwndUtil {
 
@@ -21,10 +22,31 @@ public class HwndUtil {
 		return clsName;
 	}
 
-	public static void setFocusHandle(HWND hwnd) {
+	public static void setFocusHandle(HWND hWnd) {
 		// 최소화 되어있을 경우 복원
-		User32.INSTANCE.ShowWindow(hwnd, 9);
+		if (isMinimizedHandle(hWnd)) {
+			User32.INSTANCE.ShowWindow(hWnd, 9);
+		}
 		
-		User32.INSTANCE.SetForegroundWindow(hwnd);
+		User32.INSTANCE.SetForegroundWindow(hWnd);
+	}
+	
+	/**
+	 * 최소화되어 있는 창인지 검사한다. rectangle.left값이 -32000일 경우 최소화되어 있는 창이다.
+	 * 
+	 * @param hWnd
+	 */
+	public static boolean isMinimizedHandle(HWND hWnd) {
+		if (hWnd == null) {
+			return false;
+		}
+		
+		RECT rectangle = new RECT();
+		User32.INSTANCE.GetWindowRect(hWnd, rectangle);
+		if (rectangle.left <= -32000) {
+			return true;
+		}
+		
+		return false;
 	}
 }

@@ -42,8 +42,8 @@ public class HandleFinder {
 					RECT rectangle = new RECT();
 					User32.INSTANCE.GetWindowRect(hWnd, rectangle);
 					
-					// 숨겨져 있는 창은 제외하고 찾는다. 최소화 되어있는 창은 포함한다.
-					// rectangle.left값이 -32000일 경우 최소화되어 있는 창이다.
+					// 숨겨져 있는 창은 찾지 않는다.
+					// 단, 최소화 되어있는 창은 찾는다. rectangle.left값이 -32000일 경우 최소화되어 있는 창이다.
 					// if (wText.isEmpty() || !(User32.INSTANCE.IsWindowVisible(hWnd) && rectangle.left > -32000)) {
 					if (wText.isEmpty() || !(User32.INSTANCE.IsWindowVisible(hWnd))) {
 						return true;
