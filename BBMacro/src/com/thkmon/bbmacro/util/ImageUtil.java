@@ -105,7 +105,8 @@ public class ImageUtil {
 		    			
 		    			if (screenImgObj != null) {
 		    				// 스크린샷 파일화
-		    				writeImage(screenImgObj, "screen" + imageIndex, "bmp");
+		    				// writeImage(screenImgObj, "screen" + imageIndex, "bmp");
+		    				
 		    				imageIndex++;
 		    				
 		    				Screenshot screenshot = new Screenshot();
@@ -189,10 +190,10 @@ public class ImageUtil {
 					LogUtil.debug("discovered! x : " + xs + " / y : " + ys + " / w : " + smImg.getWidth() + " / h : " + smImg.getHeight());
 					rect = new Rect(xs, ys, smallWidth, smallHeight);
 					
-					try {
-						BufferedImage cropImgObj = bigImg.getSubimage(xs, ys, smallWidth, smallHeight);
-						writeImage(cropImgObj, "toclick", "bmp");
-					} catch (Exception e) {}
+//					try {
+//						BufferedImage cropImgObj = bigImg.getSubimage(xs, ys, smallWidth, smallHeight);
+//						writeImage(cropImgObj, "toclick", "bmp");
+//					} catch (Exception e) {}
 					
 					break;
 				}
