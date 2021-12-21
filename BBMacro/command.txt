@@ -1,62 +1,60 @@
 DEBUG "PROGRAM BEGIN"
 
-DIM outputDirPath = "C:\bbmacro\output\"
-
-FILE pathList FROM "C:\bbmacro\pathList.txt" (UTF-8)
 FILE binaryList FROM "C:\bbmacro\binaryList.txt" (UTF-8)
 
-DEBUG LEN(pathList)
 DEBUG LEN(binaryList)
 
-DIM lastIndex = LEN(pathList)
+DIM lastIndex = LEN(binaryList)
 lastIndex = lastIndex - 1
 
 DEBUG lastIndex
 
 FOR i = 0 TO lastIndex
-	DIM path = pathList[i]
 	DIM binary = binaryList[i]
-
-	// 윈도우를 찾아서 포커싱한다. 해당 윈도우가 없을 경우 exe를 실행한다.
-	WINDOW win AS "HwpApp" WITH "C:\Program Files (x86)\Hnc\Hwp80\Hwp.exe"
+	
+	DEBUG "진행상황"
+	DEBUG i
+	DEBUG lastIndex
+	DEBUG binary
+	
+	// 윈도우를 찾아서 포커싱한다. 
+	WINDOW win AS "바이너리복구"
 	FOCUSWIN win
+	DELAY 100
 	
-	CLICKIMG "img\button_open.bmp"
+	// 바이너리 아이디 인풋박스를 클릭한다. 커서가 깜빡일 수 있으므로 이미지 좌측을 약간 잘라서 저장했음.
+	CLICKIMG "img\binary\input_binaryid.bmp"
 	
-	WINDOW win2 AS "불러오기"
-	FOCUSWIN win2
-
-	PASTE path
+	PASTE binary
+	DELAY 100
+	
+	CLICKIMG "img\binary\button_open.bmp"
+	DELAY 100
+	
+	MOVEMOUSETOIMG "img\binary\button_paste.bmp"
+	DELAY 100
+	
+	SHIFTMOUSE 0,260
+	DELAY 100
+	
+	CLICK
+	DELAY 100
+	
+	KEY "DELETE"
+	DELAY 100
+	
+	CLICKIMG "img\binary\button_image.bmp"
+	DELAY 100
+	
+	PASTE "C:\bbmacro\itkc_logo.png"
+	DELAY 2000
 	
 	KEY "ENTER"
+	DELAY 100
 	
-	CLICKIMG "img\button_print.bmp"
-	
-	WINDOW win3 AS "인쇄"
-	FOCUSWIN win3
-	
-	CLICKIMG "img\button_pdf1.bmp|img\button_pdf2.bmp"
-	
-	CLICKIMG "img\button_print_ok.bmp"
-	
-	WINDOW win4 AS "다른 이름으로 PDF 저장"
-	FOCUSWIN win4
-	
-	DIM oneResult = outputDirPath
-	oneResult = oneResult + binary
-	oneResult = oneResult + ".pdf"
-	PASTE oneResult
-	
-	KEY "ENTER"
-	
-	FINDIMG "img\img_pdf_success.bmp"
-	KEY "ALT + F4"
-	
-	FOCUSWIN win
-	KEY "ALT + F4"
-	
-	// 파일이 제대로 저장됐는지 검사한다. paste 과정에서 Ctrl+V 대신 V가 입력되는 경우가 있으므로, 반드시 확인한다.
-	CHECKFILE oneResult
+	// MOVEMOUSETOIMG "img\binary\button_recover.bmp"
+	CLICKIMG "img\binary\button_recover.bmp"
+	DELAY 500
 	
 NEXT i
 

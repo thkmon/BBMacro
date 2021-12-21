@@ -1,13 +1,15 @@
 package com.thkmon.bbmacro.ctrl;
 
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.HashMap;
 
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.thkmon.bblogger.BBLogger;
 import com.thkmon.bbmacro.common.CommonConst;
 import com.thkmon.bbmacro.handle.HandleFinder;
-import com.thkmon.bblogger.BBLogger;
 import com.thkmon.bbmacro.prototype.FileContent;
 import com.thkmon.bbmacro.prototype.ForNextException;
 import com.thkmon.bbmacro.prototype.MsgException;
@@ -173,11 +175,19 @@ public class CommandController {
 						
 					} else if (firstSlice.equalsIgnoreCase("CLICKIMG")) {
 						// CLICKIMG
-						return commandClickImg(command, commandArr, lineNumber);
+						return commandClickImg(command, commandArr, lineNumber, true);
+						
+					} else if (firstSlice.equalsIgnoreCase("MOVEMOUSETOIMG")) {
+						// MOVEMOUSETOIMG
+						return commandClickImg(command, commandArr, lineNumber, false);
 					
 					} else if (firstSlice.equalsIgnoreCase("MOVEMOUSE")) {
 						// MOVEMOUSE
 						return commandMoveMouse(command, commandArr, lineNumber);
+						
+					} else if (firstSlice.equalsIgnoreCase("SHIFTMOUSE")) {
+						// SHIFTMOUSE
+						return commandShiftMouse(command, commandArr, lineNumber);
 						
 					} else if (firstSlice.equalsIgnoreCase("CLICK") || firstSlice.equalsIgnoreCase("DBCLICK")) {
 						// CLICK, DBCLICK
@@ -683,8 +693,13 @@ public class CommandController {
 	 * @param lineNumber
 	 * @return
 	 */
-	private boolean commandClickImg(String originCommand, String[] commandArr, int lineNumber) throws Exception {
+	private boolean commandClickImg(String originCommand, String[] commandArr, int lineNumber, boolean doClick) throws Exception {
 		String commandName = "CLICKIMG";
+		if (doClick) {
+			commandName = "CLICKIMG";
+		} else {
+			commandName = "MOVEMOUSETOIMG";	
+		}
 		
 		if (commandArr == null || commandArr.length == 0) {
 			return false;
@@ -790,10 +805,14 @@ public class CommandController {
 		int mx = imgRect.getMiddleX();
 		int my = imgRect.getMiddleY();
 		
-		if (mouseButton != null && mouseButton.equals("RIGHT")) {
-			RobotUtil.clickMouseRight(mx, my);
+		if (doClick) {
+			if (mouseButton != null && mouseButton.equals("RIGHT")) {
+				RobotUtil.clickMouseRight(mx, my);
+			} else {
+				RobotUtil.clickMouseLeft(mx, my);
+			}
 		} else {
-			RobotUtil.clickMouseLeft(mx, my);
+			RobotUtil.moveMouse(mx, my);
 		}
 		
 		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "] / mouseButton == [" + mouseButton + "]");
@@ -805,6 +824,8 @@ public class CommandController {
 	/**
 	 * MOVEMOUSE
 	 * ex) MOVEMOUSE 100,100
+	 * 
+	 * 마우스 이동하기 (현재위치와 관계없이)
 	 * 
 	 * @param originCommand
 	 * @param commandArr
@@ -849,6 +870,66 @@ public class CommandController {
 		}
 		
 		RobotUtil.moveMouse(mx, my);
+		
+		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "]");
+		
+		return true;
+	}
+	
+	
+	/**
+	 * SHIFTMOUSE
+	 * ex) SHIFTMOUSE 100,100
+	 * 
+	 * 마우스 현재위치 기준에서 이동하기
+	 * 
+	 * @param originCommand
+	 * @param commandArr
+	 * @param lineNumber
+	 * @return
+	 */
+	private boolean commandShiftMouse(String originCommand, String[] commandArr, int lineNumber) throws Exception {
+		String commandName = "SHIFTMOUSE";
+		
+		if (commandArr == null || commandArr.length == 0) {
+			return false;
+		}
+		
+		if (commandArr[0] == null || !commandArr[0].equalsIgnoreCase(commandName)) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] commandName is invalid.");
+			return false;
+		}
+		
+		String value = commandArr[1].trim();
+		
+		// 구분자 파이프로 split
+		if (value == null || value.indexOf(",") < 0) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+			return false;
+		}
+		
+		String[] valueArr = value.split(",");
+		int arrCount = valueArr.length;
+		if (arrCount < 2) {
+			LogUtil.error("Line " + lineNumber + " : [" + commandName + "] Unknown format.");
+			return false;
+		}
+		
+		int mx = 0;
+		int my = 0;
+		if (valueArr[0] != null && valueArr[0].length() > 0) {
+			mx = commandHelper.getVariablePureNumber(valueArr[0]);
+		}
+		
+		if (valueArr[1] != null && valueArr[1].length() > 0) {
+			my = commandHelper.getVariablePureNumber(valueArr[1]);
+		}
+		
+		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+		int currentX = (int)pointerInfo.getLocation().getX();
+		int currentY = (int)pointerInfo.getLocation().getY();
+			
+		RobotUtil.moveMouse(currentX + mx, currentY + my);
 		
 		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. mx == [" + mx + "] / my == [" + my + "]");
 		
