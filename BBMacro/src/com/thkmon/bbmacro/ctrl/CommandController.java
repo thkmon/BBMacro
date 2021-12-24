@@ -14,6 +14,7 @@ import com.thkmon.bbmacro.prototype.FileContent;
 import com.thkmon.bbmacro.prototype.ForNextException;
 import com.thkmon.bbmacro.prototype.MsgException;
 import com.thkmon.bbmacro.prototype.Rect;
+import com.thkmon.bbmacro.prototype.label.LabelMap;
 import com.thkmon.bbmacro.prototype.var.ForVariable;
 import com.thkmon.bbmacro.prototype.var.Variable;
 import com.thkmon.bbmacro.prototype.var.VariableMap;
@@ -33,7 +34,8 @@ import com.thkmon.bbmacro.util.StringUtil;
 public class CommandController {
 	
 	
-	public static VariableMap varMap = null;
+	public static VariableMap varMap = null; // 변수 맵
+	public static LabelMap labelMap = null; // 레이블 맵
 	public CommandHelper commandHelper = new CommandHelper();
 	
 	
@@ -44,6 +46,10 @@ public class CommandController {
 		// 변수 맵 초기화
 		varMap = null;
 		varMap = new VariableMap();
+		
+		// 레이블 맵 초기화
+		labelMap = null;
+		labelMap = new LabelMap();
 		
 		// 로봇 객체 초기화
 		try {
@@ -80,12 +86,57 @@ public class CommandController {
 			return false;
 		}
 		
+		/**
+		 * 시작 전 레이블 위치 수집
+		 */
+		{
+			String oneLine = "";
+			int lineCount = fileContent.size();
+			for (int i=0; i<lineCount; i++) {
+				oneLine = fileContent.get(i);
+				
+				String trimLine = oneLine.trim();
+				if (!trimLine.startsWith("//") && trimLine.endsWith(":") && trimLine.indexOf(" ") < 0 /*띄어쓰기없고*/ && trimLine.indexOf("	") < 0 /*탭없고*/) {
+					String labelName = trimLine.substring(0, trimLine.length() - 1);
+					labelMap.addLabel(labelName, i);
+					continue;
+				}
+			}
+		}
+		
 		boolean oneResult = false;
 		String oneLine = "";
 		int lineCount = fileContent.size();
 		for (int i=0; i<lineCount; i++) {
 			oneLine = fileContent.get(i);
 			try {
+				
+				/**
+				 * GOTO문 구현
+				 */
+				String trimLine = oneLine.trim();
+				if (trimLine.startsWith("GOTO ")) {
+					String labelName = trimLine.substring(4).trim();
+					int labelLineNumber = -1;
+					try {
+						labelLineNumber = labelMap.getLabelLineNumber(labelName);
+					} catch (Exception e) {
+						labelLineNumber = -1;
+					}
+					
+					if (labelLineNumber == -1) {
+						LogUtil.error("Label not found. labelName == [" + labelName + "]" );
+						return false;
+					} else {
+						i = labelLineNumber;
+						LogUtil.debug("Go to label. labelName == [" + labelName + "] / labelLineNumber == [" + labelLineNumber + "]");
+						continue;
+					}
+				}
+				
+				/**
+				 * 명령어 수행
+				 */
 				oneResult = runSingleCommand(oneLine, i);
 				
 			} catch (ForNextException e) {
@@ -1096,6 +1147,32 @@ public class CommandController {
 			return false;
 		}
 		
+		
+		/**
+		 * FINDIMG 내에 일종의 GOTO 문 구현 (ex : FINDIMG "경로" A:B 식으로 사용하면, 이미지 찾으면 A 로 이동, 이미지 찾지 못하면 B 로 이동
+		 */
+		boolean isFindImgOnce = false;
+		String leftLabelName = "";
+		String rightLabelName = "";
+		
+		if (commandArr.length > 2) {
+			String lastCommand = commandArr[2];
+			if (lastCommand != null && lastCommand.length() > 0) {
+				int idxColon = lastCommand.indexOf(":");
+				if (idxColon > -1) {
+					leftLabelName = lastCommand.substring(0, idxColon);
+					rightLabelName = lastCommand.substring(idxColon + 1);
+					if (leftLabelName.length() > 0 && rightLabelName.length() > 0) {
+						isFindImgOnce = true;
+					} else {
+						leftLabelName = "";
+						rightLabelName = "";
+					}
+				}
+			}
+		}
+		
+		
 		// 구분자 파이프로 split
 		String[] imagePathArr = originImagePath.split("\\|");
 		int arrCount = imagePathArr.length;
@@ -1150,9 +1227,17 @@ public class CommandController {
 				}
 				
 				imgRect = ImageUtil.findImageRectFromScreen(imgFileObj);
+				if (isFindImgOnce) {
+					break;
+				}
+				
 				if (imgRect != null) {
 					break;
 				}
+			}
+			
+			if (isFindImgOnce) {
+				break;
 			}
 			
 			if (imgRect != null) {
@@ -1162,10 +1247,23 @@ public class CommandController {
 		
 		Thread.sleep(CommonConst.defaultDelay);
 		
-		int ix = imgRect.getX();
-		int iy = imgRect.getY();
-		
-		LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. ix == [" + ix + "] / iy == [" + iy + "]");
+		if (imgRect != null) {
+			int ix = imgRect.getX();
+			int iy = imgRect.getY();
+			
+			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] SUCCESS. ix == [" + ix + "] / iy == [" + iy + "]");
+			
+			if (isFindImgOnce) {
+				int labelLineNumber = labelMap.getLabelLineNumber(leftLabelName);
+				throw new ForNextException(labelLineNumber);
+			}
+		} else {
+			LogUtil.debug("Line " + lineNumber + " : [" + commandName + "] NOT FOUND.");
+			if (isFindImgOnce) {
+				int labelLineNumber = labelMap.getLabelLineNumber(rightLabelName);
+				throw new ForNextException(labelLineNumber);
+			}
+		}
 		
 		return true;
 	}
