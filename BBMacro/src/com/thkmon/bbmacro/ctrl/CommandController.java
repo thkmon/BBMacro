@@ -115,6 +115,12 @@ public class CommandController {
 				 * GOTO문 구현
 				 */
 				String trimLine = oneLine.trim();
+				
+				// 레이블 위치 라인은 무시
+				if (!trimLine.startsWith("//") && trimLine.endsWith(":") && trimLine.indexOf(" ") < 0 /*띄어쓰기없고*/ && trimLine.indexOf("	") < 0 /*탭없고*/) {
+					continue;
+				}
+				
 				if (trimLine.startsWith("GOTO ")) {
 					String labelName = trimLine.substring(4).trim();
 					int labelLineNumber = -1;
