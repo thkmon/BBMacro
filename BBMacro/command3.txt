@@ -1,0 +1,61 @@
+DEBUG "PROGRAM BEGIN"
+
+FILE binaryList FROM "C:\bbmacro\binaryList.txt" (UTF-8)
+
+DEBUG LEN(binaryList)
+
+DIM lastIndex = LEN(binaryList)
+lastIndex = lastIndex - 1
+
+DEBUG lastIndex
+
+FOR i = 0 TO lastIndex
+	DIM binary = binaryList[i]
+	
+	DEBUG "진행상황"
+	DEBUG i
+	DEBUG lastIndex
+	DEBUG binary
+	
+	// 윈도우를 찾아서 포커싱한다. 
+	WINDOW win AS "바이너리복구"
+	FOCUSWIN win
+	DELAY 100
+	
+	// 바이너리 아이디 인풋박스를 클릭한다. 커서가 깜빡일 수 있으므로 이미지 좌측을 약간 잘라서 저장했음.
+	CLICKIMG "img\binary\input_binaryid.bmp"
+	
+	PASTE binary
+	DELAY 100
+	
+	CLICKIMG "img\binary\button_open.bmp"
+	DELAY 100
+	
+	MOVEMOUSETOIMG "img\binary\button_paste.bmp"
+	DELAY 100
+	
+	SHIFTMOUSE 0,260
+	DELAY 100
+	
+	CLICK
+	DELAY 100
+	
+	KEY "DELETE"
+	DELAY 100
+	
+	CLICKIMG "img\binary\button_image.bmp"
+	DELAY 100
+	
+	PASTE "C:\bbmacro\itkc_logo.png"
+	DELAY 2000
+	
+	KEY "ENTER"
+	DELAY 100
+	
+	// MOVEMOUSETOIMG "img\binary\button_recover.bmp"
+	CLICKIMG "img\binary\button_recover.bmp"
+	DELAY 500
+	
+NEXT i
+
+DEBUG "PROGRAM END"
